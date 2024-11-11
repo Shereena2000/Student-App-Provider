@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:student_record/constants/const.dart';
 import 'package:student_record/db/functions/add_to_hive.dart';
+
 import 'package:student_record/db/model/data.dart';
 
 void showAddStudentDialog(BuildContext context, {StudentData? student}) {
@@ -13,6 +15,7 @@ void showAddStudentDialog(BuildContext context, {StudentData? student}) {
   final admissionNoController =
       TextEditingController(text: student?.admisstionNo ?? '');
   final ImagePicker _picker = ImagePicker();
+
   XFile? _image =
       student?.imagePath != null ? XFile(student!.imagePath!) : null;
   Future<void> _pickImage() async {
@@ -170,15 +173,21 @@ void showAddStudentDialog(BuildContext context, {StudentData? student}) {
                                   place: placeController.text,
                                   admisstionNo: admissionNoController.text,
                                   imagePath: _image?.path);
-
-                              AddStudentData.addToHive(student);
+                              final addStudentData =
+                                  Provider.of<AddStudentData>(context,
+                                      listen: false);
+                              addStudentData.addToHive(student);
                             } else {
                               student.name = nameController.text;
                               student.age = ageController.text;
                               student.place = placeController.text;
                               student.admisstionNo = admissionNoController.text;
                               student.imagePath = _image?.path;
-                              AddStudentData.updateData(student);
+                         
+                               final addStudentData =
+                                  Provider.of<AddStudentData>(context,
+                                      listen: false);
+                              addStudentData.updateData(student);
                             }
                             Navigator.pop(context);
                           }

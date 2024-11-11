@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_record/components/add_detailes.dart';
 import 'package:student_record/components/student_grid_tile.dart';
 import 'package:student_record/components/student_tile.dart';
@@ -14,6 +15,14 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+@override
+void initState() {
+  super.initState();
+   WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<AddStudentData>(context, listen: false).getAllStudent();
+    });
+}
+
   final TextEditingController _searchController = TextEditingController();
   bool _isGridView = false;
   bool _isSearching = false;
@@ -99,39 +108,43 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         body: Padding(
           padding: const EdgeInsets.only(top: 8.0, left: 8, right: 8),
-          child: ValueListenableBuilder(
-              valueListenable: studentNotifier,
-              builder: (context, List<StudentData> value, child) {
-                final filteredStudent = _filterStudent(value, _searchQuery);
-                if (filteredStudent.isEmpty) {
-                  return const Center(
-                    child: Text(
-                      "STUDENT DATA IS EMPTY!!!",
-                      style: TextStyle(
-                          color: tealColor, fontWeight: FontWeight.bold),
+          child: Consumer<AddStudentData>(builder: (
+            context,
+            addStudentData,
+            child,
+          ) {
+            final filteredStudent =
+                _filterStudent(addStudentData.students, _searchQuery);
+            if (filteredStudent.isEmpty) {
+              return const Center(
+                child: Text(
+                  "STUDENT DATA IS EMPTY!!!",
+                  style:
+                      TextStyle(color: tealColor, fontWeight: FontWeight.bold),
+                ),
+              );
+            }
+            return !_isGridView
+                ? ListView.builder(
+                    itemCount: filteredStudent.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return StudentTile(student: filteredStudent[index]);
+                    })
+                : GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      mainAxisSpacing: 8.0,
+                      crossAxisSpacing: 8.0,
                     ),
-                  );
-                }
-                return !_isGridView
-                    ? ListView.builder(
-                        itemCount: filteredStudent.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return StudentTile(student: filteredStudent[index]);
-                        })
-                    : GridView.builder(
-                        gridDelegate:const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          mainAxisSpacing: 8.0,
-                          crossAxisSpacing: 8.0,
-                        ),
-                        itemCount: filteredStudent.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return StudentGridTile(
-                            student: filteredStudent[index],
-                          );
-                        },
+                    itemCount: filteredStudent.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return StudentGridTile(
+                        student: filteredStudent[index],
                       );
-              }),
+                    },
+                  );
+          }),
         ),
         bottomNavigationBar: Container(
           height: 60.0,

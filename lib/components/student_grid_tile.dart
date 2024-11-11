@@ -12,6 +12,7 @@ class StudentGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final addStudentData=AddStudentData();
     return GestureDetector(
       onTap: () {
         viewDialoge(context, student);
@@ -61,7 +62,7 @@ class StudentGridTile extends StatelessWidget {
                   IconButton(
                       onPressed: () {
                         if (student.id != null) {
-                          AddStudentData.deletData(student.id!);
+                          addStudentData.deletData(student.id!);
                         } else {
                           print('Id is null,cannot delete');
                         }

@@ -5,7 +5,7 @@ import 'package:student_record/components/view_details.dart';
 import 'package:student_record/constants/const.dart';
 import 'package:student_record/db/functions/add_to_hive.dart';
 import 'package:student_record/db/model/data.dart';
-
+import 'package:provider/provider.dart';
 class StudentTile extends StatelessWidget {
   final StudentData student;
   const StudentTile({
@@ -15,6 +15,7 @@ class StudentTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+   
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Container(
@@ -55,8 +56,11 @@ class StudentTile extends StatelessWidget {
                 IconButton(
                   onPressed: () {
                     if (student.id != null) {
-                      AddStudentData.deletData(student.id!);
-                    }
+                     Provider.of<AddStudentData>(context, listen: false)
+                            .deletData(student.id!);
+                    }else {
+                        print('Id is null, cannot delete');
+                      }
                   },
                   icon: const Icon(
                     Icons.delete,

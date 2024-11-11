@@ -2,36 +2,37 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:student_record/db/model/data.dart';
 
-final ValueNotifier<List<StudentData>> studentNotifier = ValueNotifier([]);
-
 class AddStudentData extends ChangeNotifier {
-  static Future<void> addToHive(student) async {
+  List<StudentData> _students = [];
+  List<StudentData> get students => _students;
+  Future<void> addToHive(StudentData student) async {
     final box = Hive.box<StudentData>('studentBox');
-    final _id = await box.add(student);
-    student.id = _id;
-    await box.put(_id, student);
-    studentNotifier.value.add(student);
-    studentNotifier.notifyListeners();
+    final id = await box.add(student);
+    student.id = id;
+    await box.put(id, student);
+    _students.add(student);
+    notifyListeners(); 
   }
 
-  static Future<void> getAllStudent() async {
-    studentNotifier.value.clear();
+  Future<void> getAllStudent() async {
     final box = Hive.box<StudentData>('studentBox');
-    studentNotifier.value.addAll(box.values);
-    studentNotifier.notifyListeners();
+    _students = box.values.toList();
+    notifyListeners();
   }
 
-  static Future<void> deletData(int id) async {
+  Future<void> deletData(int id) async {
     final box = await Hive.openBox<StudentData>('studentBox');
     box.delete(id);
     getAllStudent();
+    notifyListeners();
   }
 
-  static Future<void> updateData(StudentData student) async {
+  Future<void> updateData(StudentData student) async {
     final box = await Hive.openBox<StudentData>('studentBox');
     await box.put(student.id, student);
-    
-    getAllStudent();
-
+     int index = _students.indexWhere((s) => s.id == student.id);
+  if (index != -1) {
+    _students[index] = student;
+    notifyListeners();}
   }
 }
