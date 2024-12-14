@@ -11,7 +11,7 @@ class AddStudentData extends ChangeNotifier {
     student.id = id;
     await box.put(id, student);
     _students.add(student);
-    notifyListeners(); 
+    notifyListeners();
   }
 
   Future<void> getAllStudent() async {
@@ -30,9 +30,10 @@ class AddStudentData extends ChangeNotifier {
   Future<void> updateData(StudentData student) async {
     final box = await Hive.openBox<StudentData>('studentBox');
     await box.put(student.id, student);
-     int index = _students.indexWhere((s) => s.id == student.id);
-  if (index != -1) {
-    _students[index] = student;
-    notifyListeners();}
+    int index = _students.indexWhere((s) => s.id == student.id);
+    if (index != -1) {
+      _students[index] = student;
+      notifyListeners();
+    }
   }
 }

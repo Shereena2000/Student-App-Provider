@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_record/components/add_detailes.dart';
 import 'package:student_record/components/view_details.dart';
 import 'package:student_record/constants/const.dart';
@@ -12,7 +13,6 @@ class StudentGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addStudentData=AddStudentData();
     return GestureDetector(
       onTap: () {
         viewDialoge(context, student);
@@ -53,7 +53,19 @@ class StudentGridTile extends StatelessWidget {
                 children: [
                   IconButton(
                       onPressed: () {
-                        showAddStudentDialog(context, student: student);
+                        showAddStudentDialog(
+                          context,
+                          student: student,
+                          showSnackbar: (message) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(message),
+                                backgroundColor: Colors.green,
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          },
+                        );
                       },
                       icon: const Icon(
                         Icons.edit,
@@ -62,9 +74,10 @@ class StudentGridTile extends StatelessWidget {
                   IconButton(
                       onPressed: () {
                         if (student.id != null) {
-                          addStudentData.deletData(student.id!);
+                          Provider.of<AddStudentData>(context, listen: false)
+                              .deletData(student.id!);
                         } else {
-                          print('Id is null,cannot delete');
+                          print('Id is null, cannot delete');
                         }
                       },
                       icon: const Icon(

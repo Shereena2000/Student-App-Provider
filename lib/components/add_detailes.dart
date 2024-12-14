@@ -7,7 +7,7 @@ import 'package:student_record/db/functions/add_to_hive.dart';
 
 import 'package:student_record/db/model/data.dart';
 
-void showAddStudentDialog(BuildContext context, {StudentData? student}) {
+void showAddStudentDialog(BuildContext context, {StudentData? student,Function(String)? showSnackbar,}) {
   final _formKey = GlobalKey<FormState>();
   final nameController = TextEditingController(text: student?.name ?? '');
   final ageController = TextEditingController(text: student?.age ?? '');
@@ -15,7 +15,6 @@ void showAddStudentDialog(BuildContext context, {StudentData? student}) {
   final admissionNoController =
       TextEditingController(text: student?.admisstionNo ?? '');
   final ImagePicker _picker = ImagePicker();
-
   XFile? _image =
       student?.imagePath != null ? XFile(student!.imagePath!) : null;
   Future<void> _pickImage() async {
@@ -177,6 +176,7 @@ void showAddStudentDialog(BuildContext context, {StudentData? student}) {
                                   Provider.of<AddStudentData>(context,
                                       listen: false);
                               addStudentData.addToHive(student);
+                               showSnackbar?.call("Student added successfully!");
                             } else {
                               student.name = nameController.text;
                               student.age = ageController.text;
@@ -188,6 +188,7 @@ void showAddStudentDialog(BuildContext context, {StudentData? student}) {
                                   Provider.of<AddStudentData>(context,
                                       listen: false);
                               addStudentData.updateData(student);
+                               showSnackbar?.call("Student updated successfully!");
                             }
                             Navigator.pop(context);
                           }
@@ -195,7 +196,7 @@ void showAddStudentDialog(BuildContext context, {StudentData? student}) {
                         child: Text('Save'),
                         style: ButtonStyle(
                           backgroundColor:
-                              MaterialStateProperty.all<Color>(Colors.white),
+                             MaterialStateProperty.all<Color>(Colors.white),
                         ),
                       ),
                       TextButton(

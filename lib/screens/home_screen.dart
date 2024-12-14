@@ -15,13 +15,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-@override
-void initState() {
-  super.initState();
+  @override
+  void initState() {
+    super.initState();
    WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<AddStudentData>(context, listen: false).getAllStudent();
-    });
-}
+   });
+  }
 
   final TextEditingController _searchController = TextEditingController();
   bool _isGridView = false;
@@ -158,6 +158,15 @@ void initState() {
                   onPressed: () {
                     showAddStudentDialog(
                       context,
+                      showSnackbar: (message) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(message),
+                            backgroundColor: Colors.green,
+                            duration: const Duration(seconds: 2),
+                          ),
+                        );
+                      },
                     );
                   },
                   child: Icon(

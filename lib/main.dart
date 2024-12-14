@@ -8,6 +8,7 @@ import 'package:student_record/db/model/data.dart';
 import 'package:student_record/screens/home_screen.dart';
 
 Future<void> main() async {
+
  await Hive.initFlutter();
  if (!Hive.isAdapterRegistered(StudentDataAdapter().typeId)) {
    Hive.registerAdapter(StudentDataAdapter());
